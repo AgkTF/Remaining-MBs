@@ -1,22 +1,27 @@
+require('dotenv').config();
 const puppeteer = require('puppeteer');
 const screenshot = 'remaining-MBs.png';
+
 (async () => {
-	const url = 'http://192.168.0.1/login.asp';
+	const url = process.env.URL;
 	try {
 		const browser = await puppeteer.launch({ headless: true });
 		const page = await browser.newPage();
 		await page.setViewport({ width: 1920, height: 1080 });
 		await page.goto(url);
-		await page.type('#ID', 'admin');
-		await page.type('#PASSWORD', 'thp2safer');
+		await page.type('#ID', process.env.ID);
+		await page.type('#PASSWORD', process.env.PASSWORD);
 
+		// submit the form
 		await Promise.all([
 			page.waitForNavigation(),
 			page.click('#wan_change_mode')
 		]);
 
+		// navigate to the sms page
 		await Promise.all([page.waitForNavigation(), page.click('#navi-sms')]);
 
+		// get the iframe
 		const frame = page
 			.frames()
 			.find(frame => frame.name() === 'interFrame');
@@ -27,8 +32,17 @@ const screenshot = 'remaining-MBs.png';
 
 		await frame.waitFor(5000);
 
+		// read the remaining MBs
+		const replyField = await frame.$('#ussd_read');
+		const text = await frame.evaluate(
+			element => element.textContent,
+			replyField
+		);
+
+		// print the message to the console
 		console.log('The remaining MBS: ', text);
 
+		// take a screenshot of the current page
 		await page.screenshot({ path: screenshot, fullPage: true });
 
 		browser.close();
