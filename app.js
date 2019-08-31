@@ -17,14 +17,17 @@ const screenshot = 'remaining-MBs.png';
 
 		await Promise.all([page.waitForNavigation(), page.click('#navi-sms')]);
 
-		await page.waitForSelector('iframe');
-		console.log('iframe is ready. Loading iframe content');
+		const frame = page
+			.frames()
+			.find(frame => frame.name() === 'interFrame');
 
-		const elementHandle = await page.$('iframe[id="interFrame"]');
-
-		const frame = await elementHandle.contentFrame();
 		await frame.click('a[href="#tabs-2"]');
-		await frame.type('#ussd_cmd', '');
+		await frame.type('#ussd_cmd', '*414#');
+		await frame.click('input[onclick="doSendUssd();"]');
+
+		await frame.waitFor(5000);
+
+		console.log('The remaining MBS: ', text);
 
 		await page.screenshot({ path: screenshot, fullPage: true });
 
