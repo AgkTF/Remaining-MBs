@@ -1,0 +1,11 @@
+{
+	"dependencies": {
+		"puppeteer": "^1.19.0"
+	},
+	"name": "internet-usage-monitor",
+	"version": "1.0.0",
+	"description": "A simple automation tool to track my internet usage with screenshots.",
+	"main": "app.js",
+	"author": "AgkTF",
+	"license": "MIT"
+}
