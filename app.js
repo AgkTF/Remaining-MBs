@@ -1,6 +1,7 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
-const screenshot = 'remaining-MBs.png';
+const date = new Date().toISOString();
+const screenshot = `${date}.png`;
 
 (async () => {
 	const url = process.env.URL;
